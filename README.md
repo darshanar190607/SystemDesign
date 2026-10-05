@@ -54,10 +54,8 @@ npm run test:load
 
 - [`docs/SIMULATION_DESIGN.md`](docs/SIMULATION_DESIGN.md) — Comprehensive simulation architecture and subsystems.
 - [`docs/TEST_SCENARIOS.md`](docs/TEST_SCENARIOS.md) — Detailed catalog of all 6 test scenarios (TS-001 to TS-006).
-- [`docs/VALIDATION_RESULTS.md`](docs/VALIDATION_RESULTS.md) — Formal measured test results, latency percentiles, and hackathon presentation walk-through.
 - [`docs/SIMULATION_SOURCE_MAP.md`](docs/SIMULATION_SOURCE_MAP.md) — Contract mapping linking simulation features to student owner roles.
-- [`docs/OPEN_DESIGN_DECISIONS.md`](docs/OPEN_DESIGN_DECISIONS.md) — Gap register and baseline assumptions.
-- [`docs/AI_USAGE_NOTE.md`](docs/AI_USAGE_NOTE.md) — Log of AI-assisted scaffolding and human/agent validation.
+- `docs/Requirements.docx` — Team requirements specification document.
 
 ---
 
