@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SalestormSimulationResult",
+  "type": "object",
+  "required": [
+    "runId",
+    "scenario",
+    "performance",
+    "business",
+    "invariantResult"
+  ],
+  "properties": {
+    "runId": { "type": "string" },
+    "scenario": { "type": "string" },
+    "performance": {
+      "type": "object",
+      "required": ["totalRequests", "durationSeconds", "requestsPerSecond", "latency"],
+      "properties": {
+        "totalRequests": { "type": "number" },
+        "durationSeconds": { "type": "number" },
+        "requestsPerSecond": { "type": "number" },
+        "latency": {
+          "type": "object",
+          "properties": {
+            "avgMs": { "type": "number" },
+            "p50Ms": { "type": "number" },
+            "p95Ms": { "type": "number" },
+            "p99Ms": { "type": "number" },
+            "maxMs": { "type": "number" }
+          }
+        }
+      }
+    },
+    "business": {
+      "type": "object",
+      "required": [
+        "initialInventory",
+        "virtualUsers",
+        "totalPurchaseAttempts",
+        "successfulReservations",
+        "ordersCreated",
+        "oversoldUnits",
+        "invariantsVerdict"
+      ]
+    },
+    "invariantResult": {
+      "type": "object",
+      "required": ["allPassed", "checks"]
+    }
+  }
+}

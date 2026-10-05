@@ -1,0 +1,70 @@
+{
+  "timestamp": "2026-10-05T05:51:46.895Z",
+  "environment": {
+    "nodeVersion": "v22.14.0",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "stages": [
+    {
+      "id": "stage1_functional",
+      "name": "Stage 1 — Functional Baseline",
+      "users": 2,
+      "stock": 2,
+      "duration": 0.001,
+      "rps": 2000,
+      "orders": 2,
+      "oversold": 0,
+      "invariantsPass": true,
+      "jsonFile": "stage1_functional.json"
+    },
+    {
+      "id": "stage2_concurrency",
+      "name": "Stage 2 — Concurrency Correctness (Smallest Test)",
+      "users": 2,
+      "stock": 1,
+      "duration": 0.001,
+      "rps": 2000,
+      "orders": 1,
+      "oversold": 0,
+      "invariantsPass": true,
+      "jsonFile": "stage2_concurrency.json"
+    },
+    {
+      "id": "stage3_moderate",
+      "name": "Stage 3 — Moderate Load",
+      "users": 100,
+      "stock": 20,
+      "duration": 0.003,
+      "rps": 28996.43,
+      "orders": 20,
+      "oversold": 0,
+      "invariantsPass": true,
+      "jsonFile": "stage3_moderate.json"
+    },
+    {
+      "id": "stage4_large",
+      "name": "Stage 4 — Large Load",
+      "users": 1000,
+      "stock": 100,
+      "duration": 0.008,
+      "rps": 119054.71,
+      "orders": 100,
+      "oversold": 0,
+      "invariantsPass": true,
+      "jsonFile": "stage4_large.json"
+    },
+    {
+      "id": "stage5_flash_sale_10k",
+      "name": "Stage 5 — Official Flash Sale Scenario (10,000 vs 100)",
+      "users": 10000,
+      "stock": 100,
+      "duration": 0.047,
+      "rps": 211649.17,
+      "orders": 100,
+      "oversold": 0,
+      "invariantsPass": true,
+      "jsonFile": "stage5_flash_sale_10k.json"
+    }
+  ]
+}

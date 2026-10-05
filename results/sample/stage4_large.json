@@ -1,0 +1,127 @@
+{
+  "runId": "RUN_1791179506824",
+  "scenario": "Stage 4 — Large Load",
+  "performance": {
+    "totalRequests": 1000,
+    "durationSeconds": 0.008,
+    "requestsPerSecond": 119054.71,
+    "latency": {
+      "avgMs": 0.01,
+      "p50Ms": 0,
+      "p95Ms": 0.01,
+      "p99Ms": 0.02,
+      "maxMs": 2.6
+    }
+  },
+  "business": {
+    "scenario": "Stage 4 — Large Load",
+    "initialInventory": 100,
+    "virtualUsers": 1000,
+    "totalPurchaseAttempts": 1000,
+    "successfulReservations": 103,
+    "failedReservationsOutOfStock": 878,
+    "duplicateRequestsDetected": 19,
+    "paymentSuccesses": 100,
+    "paymentFailures": 3,
+    "ordersCreated": 100,
+    "finalInventory": {
+      "available": 0,
+      "reserved": 0,
+      "sold": 100,
+      "total": 100
+    },
+    "oversoldUnits": 0,
+    "invariantsVerdict": "PASS",
+    "invariantChecks": [
+      {
+        "id": "INV-1",
+        "name": "No Overselling",
+        "passed": true,
+        "details": "Reserved (0) + Sold (100) = 100 <= Initial (100)"
+      },
+      {
+        "id": "INV-2",
+        "name": "Non-Negative Inventory",
+        "passed": true,
+        "details": "Available: 0, Historical negative states found: NO"
+      },
+      {
+        "id": "INV-3",
+        "name": "Inventory Conservation Accounting",
+        "passed": true,
+        "details": "Available (0) + Reserved (0) + Sold (100) = 100 (Total: 100)"
+      },
+      {
+        "id": "INV-4",
+        "name": "Idempotency Protection",
+        "passed": true,
+        "details": "Unique keys with multiple successful transactions: 0"
+      },
+      {
+        "id": "INV-5",
+        "name": "Payment Failure Safety",
+        "passed": true,
+        "details": "Orders created on failed payments: 0"
+      },
+      {
+        "id": "INV-6",
+        "name": "Reservation Expiry Release",
+        "passed": true,
+        "details": "Unswept expired reservations holding stock: 0"
+      },
+      {
+        "id": "INV-7",
+        "name": "Order Service Recovery",
+        "passed": true,
+        "details": "Orders in Dead Letter Queue: 0, Retry queue remaining: 0"
+      }
+    ]
+  },
+  "invariantResult": {
+    "allPassed": true,
+    "checks": [
+      {
+        "id": "INV-1",
+        "name": "No Overselling",
+        "passed": true,
+        "details": "Reserved (0) + Sold (100) = 100 <= Initial (100)"
+      },
+      {
+        "id": "INV-2",
+        "name": "Non-Negative Inventory",
+        "passed": true,
+        "details": "Available: 0, Historical negative states found: NO"
+      },
+      {
+        "id": "INV-3",
+        "name": "Inventory Conservation Accounting",
+        "passed": true,
+        "details": "Available (0) + Reserved (0) + Sold (100) = 100 (Total: 100)"
+      },
+      {
+        "id": "INV-4",
+        "name": "Idempotency Protection",
+        "passed": true,
+        "details": "Unique keys with multiple successful transactions: 0"
+      },
+      {
+        "id": "INV-5",
+        "name": "Payment Failure Safety",
+        "passed": true,
+        "details": "Orders created on failed payments: 0"
+      },
+      {
+        "id": "INV-6",
+        "name": "Reservation Expiry Release",
+        "passed": true,
+        "details": "Unswept expired reservations holding stock: 0"
+      },
+      {
+        "id": "INV-7",
+        "name": "Order Service Recovery",
+        "passed": true,
+        "details": "Orders in Dead Letter Queue: 0, Retry queue remaining: 0"
+      }
+    ]
+  }
+}
