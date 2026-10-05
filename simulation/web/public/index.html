@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SALESTORM — Flash Sale Simulation & Architecture Validation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-icon">⚡</div>
+        <div>
+          <div class="brand-title">SALESTORM <span class="badge badge-primary">SIMULATION HARNESS</span></div>
+          <div class="brand-subtitle">High-Scale Flash-Sale Architecture Validation (10,000 Attempts vs 100 Units)</div>
+        </div>
+      </div>
+      <div class="header-status">
+        <div class="status-indicator online">
+          <span class="dot"></span>
+          <span id="serverStatusText">Control Plane Ready</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="main-content">
+      <!-- Left Column: Controls & Presets -->
+      <section class="control-panel panel">
+        <div class="panel-header">
+          <h2>⚡ Scenario Presets</h2>
+          <span class="panel-tag">Quick Select</span>
+        </div>
+        <div class="presets-grid">
+          <button type="button" class="btn btn-preset active" data-preset="flash-sale">
+            <div class="preset-name">TS-002 Flash Sale</div>
+            <div class="preset-meta">10,000 Users • 100 Units</div>
+          </button>
+          <button type="button" class="btn btn-preset" data-preset="last-item">
+            <div class="preset-name">TS-001 Last Item</div>
+            <div class="preset-meta">2 Users • 1 Unit</div>
+          </button>
+          <button type="button" class="btn btn-preset" data-preset="duplicate">
+            <div class="preset-name">TS-003 Idempotency</div>
+            <div class="preset-meta">500 Users • 30% Dups</div>
+          </button>
+          <button type="button" class="btn btn-preset" data-preset="payment-fail">
+            <div class="preset-name">TS-004 Payment Fail</div>
+            <div class="preset-meta">20 Users • 50% Drop</div>
+          </button>
+          <button type="button" class="btn btn-preset" data-preset="expiry">
+            <div class="preset-name">TS-005 TTL Expiry</div>
+            <div class="preset-meta">10 Res • 50ms TTL</div>
+          </button>
+          <button type="button" class="btn btn-preset" data-preset="order-recovery">
+            <div class="preset-name">TS-006 Order Recovery</div>
+            <div class="preset-meta">5 Buffered • Outbox Flush</div>
+          </button>
+        </div>
+
+        <div class="panel-header" style="margin-top: 1.5rem;">
+          <h2>⚙️ Scenario Parameters</h2>
+          <span class="panel-tag">Customizable</span>
+        </div>
+
+        <form id="scenarioForm" class="config-form">
+          <div class="form-group">
+            <label for="executionMode">Execution Mode</label>
+            <select id="executionMode" name="executionMode" class="form-control">
+              <option value="deterministic" selected>Mode B — Deterministic In-Memory Simulation</option>
+              <option value="connected">Mode A — Connected HTTP API Mode (Port 8000)</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="productId">Product ID</label>
+              <input type="text" id="productId" name="productId" class="form-control" value="PRODUCT-X">
+            </div>
+            <div class="form-group">
+              <label for="initialInventory">Initial Stock</label>
+              <input type="number" id="initialInventory" name="initialInventory" class="form-control" value="100" min="1" max="100000">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="virtualUsers">Virtual Users</label>
+              <input type="number" id="virtualUsers" name="virtualUsers" class="form-control" value="10000" min="1" max="50000">
+            </div>
+            <div class="form-group">
+              <label for="paymentSuccessRate">Payment Success Rate (%)</label>
+              <input type="number" id="paymentSuccessRate" name="paymentSuccessRate" class="form-control" value="95" min="0" max="100">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="duplicateRate">Duplicate Request Rate (%)</label>
+              <input type="number" id="duplicateRate" name="duplicateRate" class="form-control" value="2" min="0" max="100">
+            </div>
+            <div class="form-group">
+              <label for="targetUrl">API Base URL</label>
+              <input type="text" id="targetUrl" name="targetUrl" class="form-control" value="http://localhost:8000">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="runBtn" class="btn btn-primary btn-run">
+              <span class="btn-icon">🚀</span> Launch Simulation Run
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Right Column: Live Results & Invariants -->
+      <section class="results-panel">
+        <!-- Live Run Summary Banner -->
+        <div class="summary-banner panel">
+          <div class="summary-meta">
+            <div class="summary-title" id="scenarioHeading">TS-002: Flash Sale 10k Concurrency</div>
+            <div class="summary-id" id="runIdTag">Run ID: Ready to Execute</div>
+          </div>
+          <div class="summary-badge-group">
+            <div id="overallVerdict" class="verdict-badge verdict-pending">READY</div>
+          </div>
+        </div>
+
+        <!-- Metric Cards Grid -->
+        <div class="metrics-grid">
+          <div class="metric-card panel">
+            <div class="metric-label">TOTAL ATTEMPTS</div>
+            <div class="metric-value" id="valAttempts">0</div>
+            <div class="metric-sub" id="subAttempts">Virtual Users</div>
+          </div>
+          <div class="metric-card panel">
+            <div class="metric-label">THROUGHPUT</div>
+            <div class="metric-value" id="valRps">0 <span class="unit">RPS</span></div>
+            <div class="metric-sub" id="valDuration">Duration: 0.00s</div>
+          </div>
+          <div class="metric-card panel">
+            <div class="metric-label">ORDERS CONFIRMED</div>
+            <div class="metric-value text-emerald" id="valOrders">0</div>
+            <div class="metric-sub" id="subOrders">100% Invariant Compliant</div>
+          </div>
+          <div class="metric-card panel">
+            <div class="metric-label">OVERSOLD UNITS</div>
+            <div class="metric-value text-crimson" id="valOversold">0</div>
+            <div class="metric-sub text-emerald" id="subOversold">Zero Overselling Enforced</div>
+          </div>
+        </div>
+
+        <!-- Lifecycle Visual Funnel -->
+        <div class="panel funnel-panel">
+          <div class="panel-header">
+            <h2>📊 Purchase Flow & Inventory State Transition</h2>
+            <span class="panel-tag">Architecture Funnel</span>
+          </div>
+          <div class="funnel-container">
+            <div class="funnel-step">
+              <div class="funnel-bar bg-blue" id="funnelAttempts" style="width: 100%;"></div>
+              <div class="funnel-info">
+                <span>Purchase Attempts</span>
+                <strong id="barValAttempts">10,000</strong>
+              </div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-bar bg-amber" id="funnelReserved" style="width: 10%;"></div>
+              <div class="funnel-info">
+                <span>Successful Stock Reservations</span>
+                <strong id="barValReserved">100 (Max $\le$ 100)</strong>
+              </div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-bar bg-emerald" id="funnelPaid" style="width: 9.5%;"></div>
+              <div class="funnel-info">
+                <span>Confirmed Orders</span>
+                <strong id="barValPaid">95</strong>
+              </div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-bar bg-purple" id="funnelDuplicates" style="width: 2%;"></div>
+              <div class="funnel-info">
+                <span>Duplicates Intercepted & Deduplicated</span>
+                <strong id="barValDuplicates">200</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Latency & Business Details Grid -->
+        <div class="details-grid">
+          <!-- Latency Percentiles -->
+          <div class="panel latency-panel">
+            <div class="panel-header">
+              <h2>⏱️ Latency Percentiles</h2>
+            </div>
+            <div class="latency-list">
+              <div class="latency-row"><span>Average:</span> <strong id="latAvg">0.00 ms</strong></div>
+              <div class="latency-row"><span>p50 (Median):</span> <strong id="latP50">0.00 ms</strong></div>
+              <div class="latency-row"><span>p95:</span> <strong id="latP95">0.00 ms</strong></div>
+              <div class="latency-row"><span>p99:</span> <strong id="latP99">0.00 ms</strong></div>
+              <div class="latency-row"><span>Max:</span> <strong id="latMax">0.00 ms</strong></div>
+            </div>
+          </div>
+
+          <!-- Business State Audit -->
+          <div class="panel business-panel">
+            <div class="panel-header">
+              <h2>📦 Inventory Accounting State</h2>
+            </div>
+            <div class="inventory-balance">
+              <div class="balance-item">
+                <span class="balance-title">Initial Stock</span>
+                <span class="balance-val" id="invTotal">100</span>
+              </div>
+              <div class="balance-divider">=</div>
+              <div class="balance-item">
+                <span class="balance-title">Available</span>
+                <span class="balance-val text-blue" id="invAvailable">0</span>
+              </div>
+              <div class="balance-divider">+</div>
+              <div class="balance-item">
+                <span class="balance-title">Reserved</span>
+                <span class="balance-val text-amber" id="invReserved">0</span>
+              </div>
+              <div class="balance-divider">+</div>
+              <div class="balance-item">
+                <span class="balance-title">Sold</span>
+                <span class="balance-val text-emerald" id="invSold">100</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7 Architecture Invariants Verification Checklist -->
+        <div class="panel invariants-panel">
+          <div class="panel-header">
+            <h2>🛡️ Formal Architecture Invariants Verification</h2>
+            <span class="panel-tag" id="invariantsSummary">7 of 7 Checked</span>
+          </div>
+          <div class="invariants-list" id="invariantsContainer">
+            <!-- Dynamic Invariant Cards -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Confirmation Modal for Large Runs (Safety Guard) -->
+    <div id="confirmModal" class="modal-overlay hidden">
+      <div class="modal-box panel">
+        <div class="modal-header">
+          <h3>⚠️ High-Scale Load Test Confirmation</h3>
+        </div>
+        <div class="modal-body">
+          <p>You are about to launch a high-concurrency simulation with:</p>
+          <ul>
+            <li><strong>Virtual Users:</strong> <span id="modalUsers">10,000</span></li>
+            <li><strong>Available Units:</strong> <span id="modalStock">100</span></li>
+            <li><strong>Execution Mode:</strong> <span id="modalMode">Deterministic In-Memory</span></li>
+          </ul>
+          <p>The safety guard is verifying you want to proceed.</p>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="modalCancelBtn" class="btn btn-secondary">Cancel</button>
+          <button type="button" id="modalConfirmBtn" class="btn btn-primary">Confirm & Execute</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

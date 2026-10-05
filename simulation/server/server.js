@@ -37,6 +37,25 @@ function sendJson(res, statusCode, data) {
   res.end(JSON.stringify(data, null, 2));
 }
 
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PUBLIC_DIR = path.join(__dirname, '../web/public');
+
+function serveStaticFile(res, filePath, contentType) {
+  fs.readFile(filePath, (err, content) => {
+    if (err) {
+      sendJson(res, 404, { error: 'Not Found' });
+    } else {
+      res.writeHead(200, { 'Content-Type': contentType });
+      res.end(content);
+    }
+  });
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const pathname = url.pathname;
@@ -47,6 +66,21 @@ const server = http.createServer(async (req, res) => {
   }
 
   try {
+    // ----------------------------------------------------
+    // STATIC WEB DASHBOARD ASSETS
+    // ----------------------------------------------------
+    if (method === 'GET') {
+      if (pathname === '/' || pathname === '/index.html') {
+        return serveStaticFile(res, path.join(PUBLIC_DIR, 'index.html'), 'text/html');
+      }
+      if (pathname === '/styles.css') {
+        return serveStaticFile(res, path.join(PUBLIC_DIR, 'styles.css'), 'text/css');
+      }
+      if (pathname === '/app.js') {
+        return serveStaticFile(res, path.join(PUBLIC_DIR, 'app.js'), 'application/javascript');
+      }
+    }
+
     // ----------------------------------------------------
     // SALESTORM DATA PLANE APIS
     // ----------------------------------------------------
