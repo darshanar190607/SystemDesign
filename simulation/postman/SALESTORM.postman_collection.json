@@ -1,0 +1,153 @@
+{
+  "info": {
+    "name": "SALESTORM Flash Sale API Collection",
+    "description": "Postman API test collection for SALESTORM flash-sale data plane and simulation control plane.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/api/v1/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "v1", "health"]
+        }
+      }
+    },
+    {
+      "name": "Get Inventory Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/api/v1/inventory/PRODUCT-X",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "v1", "inventory", "PRODUCT-X"]
+        }
+      }
+    },
+    {
+      "name": "Reset Inventory",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"stock\": 100\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/v1/inventory/reset",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "v1", "inventory", "reset"]
+        }
+      }
+    },
+    {
+      "name": "Create Reservation (Buy Now)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Idempotency-Key", "value": "IDEMP-DEMO-001" },
+          { "key": "X-Request-Id", "value": "REQ-DEMO-001" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"productId\": \"PRODUCT-X\",\n  \"userId\": \"USER_1001\",\n  \"quantity\": 1\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/v1/reservations",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "v1", "reservations"]
+        }
+      }
+    },
+    {
+      "name": "Process Payment",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reservationId\": \"{{reservationId}}\",\n  \"amount\": 100\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/v1/payments",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "v1", "payments"]
+        }
+      }
+    },
+    {
+      "name": "Confirm Order",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reservationId\": \"{{reservationId}}\",\n  \"userId\": \"USER_1001\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/v1/orders",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "v1", "orders"]
+        }
+      }
+    },
+    {
+      "name": "Get Invariants Audit",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/api/v1/audit/invariants",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "v1", "audit", "invariants"]
+        }
+      }
+    },
+    {
+      "name": "Trigger Simulation Run (Control Plane)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenarioName\": \"Flash Sale 10k Run\",\n  \"initialInventory\": 100,\n  \"virtualUsers\": 10000,\n  \"paymentSuccessRate\": 0.95,\n  \"duplicateRate\": 0.02\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/simulation/runs",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["simulation", "runs"]
+        }
+      }
+    }
+  ]
+}

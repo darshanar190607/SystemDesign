@@ -4,7 +4,9 @@
   "description": "SALESTORM High-Scale Flash Sale Simulation & Validation Harness",
   "type": "module",
   "scripts": {
+    "start:server": "node simulation/server/server.js",
     "test:deterministic": "node simulation/deterministic/run_all.js",
+    "test:load": "python simulation/locust/run_load_test.py",
     "test:ts001": "node simulation/deterministic/scenarios/TS001_LastItem.js",
     "test:ts002": "node simulation/deterministic/scenarios/TS002_FlashSale10k.js",
     "test:ts003": "node simulation/deterministic/scenarios/TS003_DuplicateRequest.js",
@@ -12,7 +14,13 @@
     "test:ts005": "node simulation/deterministic/scenarios/TS005_ReservationExpiry.js",
     "test:ts006": "node simulation/deterministic/scenarios/TS006_OrderRecovery.js"
   },
-  "keywords": ["system-design", "flash-sale", "concurrency", "simulation", "locust"],
+  "keywords": [
+    "system-design",
+    "flash-sale",
+    "concurrency",
+    "simulation",
+    "locust"
+  ],
   "author": "SysCrafters 2026 Team",
   "license": "MIT"
 }
